@@ -9,6 +9,7 @@ import com.blamejared.crafttweaker_annotation_processors.processors.document.con
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.named_type.SuperTypeConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.native_registration.member.NativeTypeVirtualMemberConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.ClassTypeConverter;
+import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.KnownElementList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.mods.KnownModList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.TypeName;
@@ -42,8 +43,8 @@ public class NativeRegistrationConverter extends DocumentConverter {
     private final Types typeUtils;
     private final ClassTypeConverter classTypeConverter;
     
-    public NativeRegistrationConverter(KnownModList knownModList, CommentConverter commentConverter, StaticMemberConverter staticMemberConverter, NativeTypeVirtualMemberConverter virtualMemberConverter, SuperTypeConverter superTypeConverter, ImplementationConverter implementationConverter, GenericParameterConverter genericParameterConverter, NativeConversionRegistry nativeConversionRegistry, Types typeUtils, ClassTypeConverter classTypeConverter) {
-        super(knownModList, commentConverter);
+    public NativeRegistrationConverter(KnownElementList knownElementList, KnownModList knownModList, CommentConverter commentConverter, StaticMemberConverter staticMemberConverter, NativeTypeVirtualMemberConverter virtualMemberConverter, SuperTypeConverter superTypeConverter, ImplementationConverter implementationConverter, GenericParameterConverter genericParameterConverter, NativeConversionRegistry nativeConversionRegistry, Types typeUtils, ClassTypeConverter classTypeConverter) {
+        super(knownElementList, knownModList, commentConverter);
         this.staticMemberConverter = staticMemberConverter;
         this.virtualMemberConverter = virtualMemberConverter;
         this.superTypeConverter = superTypeConverter;
@@ -125,7 +126,7 @@ public class NativeRegistrationConverter extends DocumentConverter {
     }
     
     private DocumentedVirtualMembers convertVirtualMembers(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        return virtualMemberConverter.convertFor(typeElement, pageInfo);
+        return virtualMemberConverter.convertFor(knownElementList, typeElement, pageInfo);
     }
     
     private AbstractTypeInfo convertSuperType(TypeElement typeElement) {
@@ -139,7 +140,7 @@ public class NativeRegistrationConverter extends DocumentConverter {
     }
     
     private DocumentedStaticMembers convertStaticMembers(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        return staticMemberConverter.convertFor(typeElement, pageInfo);
+        return staticMemberConverter.convertFor(knownElementList,typeElement, pageInfo);
     }
     
     private List<DocumentedGenericParameter> convertGenericParameters(TypeElement typeElement) {

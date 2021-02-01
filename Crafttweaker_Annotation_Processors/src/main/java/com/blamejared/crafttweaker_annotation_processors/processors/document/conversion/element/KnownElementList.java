@@ -12,6 +12,7 @@ import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,10 @@ public class KnownElementList {
     public KnownElementList(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
         this.knownElements = new HashSet<>();
+    }
+    
+    public Optional<TypeElement> getElement(String name){
+        return knownElements.stream().filter(typeElement -> typeElement.getQualifiedName().contentEquals(name)).findFirst();
     }
     
     private void updateElements() {

@@ -3,6 +3,7 @@ package com.blamejared.crafttweaker_annotation_processors.processors.document.co
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.expansion.member.ExpansionVirtualMemberConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.type.TypeConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.ClassTypeConverter;
+import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.KnownElementList;
 import com.blamejared.crafttweaker_annotation_processors.processors.util.dependencies.DependencyContainer;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.comment.DocumentationComment;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
@@ -44,8 +45,8 @@ public class NativeTypeVirtualMemberConverter extends ExpansionVirtualMemberConv
     }
     
     @Override
-    public DocumentedVirtualMembers convertFor(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        final DocumentedVirtualMembers virtualMembers = super.convertFor(typeElement, pageInfo);
+    public DocumentedVirtualMembers convertFor(KnownElementList knownElements, TypeElement typeElement, DocumentationPageInfo pageInfo) {
+        final DocumentedVirtualMembers virtualMembers = super.convertFor(knownElements,typeElement, pageInfo);
         return addInjectedConstructors((DocumentedTypeVirtualMembers) virtualMembers, typeElement, (TypePageInfo) pageInfo);
     }
     

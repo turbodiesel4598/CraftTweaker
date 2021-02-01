@@ -6,6 +6,7 @@ import com.blamejared.crafttweaker_annotation_processors.processors.document.con
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.expansion.member.ExpansionVirtualMemberConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.member.static_member.StaticMemberConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.type.TypeConverter;
+import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.KnownElementList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.mods.KnownModList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.comment.DocumentationComment;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
@@ -31,8 +32,8 @@ public class ExpansionConverter extends DocumentConverter {
     private final TypeConverter typeConverter;
     private final DocumentRegistry documentRegistry;
     
-    public ExpansionConverter(KnownModList knownModList, CommentConverter commentConverter, DocumentRegistry documentRegistry, TypeConverter typeConverter, StaticMemberConverter staticMemberConverter, ExpansionVirtualMemberConverter virtualMemberConverter, DocumentRegistry documentRegistry1) {
-        super(knownModList, commentConverter);
+    public ExpansionConverter(KnownElementList knownElementList, KnownModList knownModList, CommentConverter commentConverter, DocumentRegistry documentRegistry, TypeConverter typeConverter, StaticMemberConverter staticMemberConverter, ExpansionVirtualMemberConverter virtualMemberConverter, DocumentRegistry documentRegistry1) {
+        super(knownElementList, knownModList, commentConverter);
         this.staticMemberConverter = staticMemberConverter;
         this.virtualMemberConverter = virtualMemberConverter;
         this.typeConverter = typeConverter;
@@ -61,9 +62,9 @@ public class ExpansionConverter extends DocumentConverter {
         return typeConverter.convertByName(expandedName);
     }
     
-    private DocumentedVirtualMembers getVirtualMembers(TypeElement typeElement, AbstractTypeInfo expandedType) {
+    private DocumentedVirtualMembers getVirtualMembers( TypeElement typeElement, AbstractTypeInfo expandedType) {
         final DocumentationPageInfo pageInfo = getPageInfoForType(expandedType);
-        return virtualMemberConverter.convertFor(typeElement, pageInfo);
+        return virtualMemberConverter.convertFor(knownElementList , typeElement, pageInfo);
     }
     
     private TypePageInfo getPageInfoForType(AbstractTypeInfo expandedType) {
@@ -83,7 +84,7 @@ public class ExpansionConverter extends DocumentConverter {
     }
     
     private DocumentedStaticMembers getStaticMembers(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        return staticMemberConverter.convertFor(typeElement, pageInfo);
+        return staticMemberConverter.convertFor(knownElementList,typeElement, pageInfo);
     }
     
     @Override

@@ -1,6 +1,7 @@
 package com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter;
 
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.comment.CommentConverter;
+import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.KnownElementList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.mods.KnownModList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.comment.DocumentationComment;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
@@ -13,10 +14,12 @@ import javax.lang.model.element.TypeElement;
 
 public abstract class DocumentConverter {
     
+    protected final KnownElementList knownElementList;
     protected final KnownModList knownModList;
     protected final CommentConverter commentConverter;
     
-    protected DocumentConverter(KnownModList knownModList, CommentConverter commentConverter) {
+    protected DocumentConverter(KnownElementList knownElementList, KnownModList knownModList, CommentConverter commentConverter) {
+        this.knownElementList = knownElementList;
         this.knownModList = knownModList;
         this.commentConverter = commentConverter;
     }

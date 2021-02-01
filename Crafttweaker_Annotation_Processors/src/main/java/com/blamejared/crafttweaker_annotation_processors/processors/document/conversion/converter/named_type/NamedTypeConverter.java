@@ -5,6 +5,7 @@ import com.blamejared.crafttweaker_annotation_processors.processors.document.con
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.member.header.GenericParameterConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.member.static_member.StaticMemberConverter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.converter.named_type.member.NamedTypeVirtualMemberConverter;
+import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.element.KnownElementList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.conversion.mods.KnownModList;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.TypeName;
@@ -31,8 +32,8 @@ public class NamedTypeConverter extends DocumentConverter {
     private final ImplementationConverter implementationConverter;
     private final StaticMemberConverter staticMemberConverter;
     
-    public NamedTypeConverter(KnownModList knownModList, CommentConverter commentConverter, GenericParameterConverter genericParameterConverter, SuperTypeConverter superTypeConverter, NamedTypeVirtualMemberConverter namedTypeVirtualMemberConverter, ImplementationConverter implementationConverter, StaticMemberConverter staticMemberConverter) {
-        super(knownModList, commentConverter);
+    public NamedTypeConverter(KnownElementList knownElementList, KnownModList knownModList, CommentConverter commentConverter, GenericParameterConverter genericParameterConverter, SuperTypeConverter superTypeConverter, NamedTypeVirtualMemberConverter namedTypeVirtualMemberConverter, ImplementationConverter implementationConverter, StaticMemberConverter staticMemberConverter) {
+        super(knownElementList, knownModList, commentConverter);
         
         this.genericParameterConverter = genericParameterConverter;
         this.superTypeConverter = superTypeConverter;
@@ -70,8 +71,8 @@ public class NamedTypeConverter extends DocumentConverter {
     @Override
     public DocumentationPage convert(TypeElement typeElement, DocumentationPageInfo pageInfo) {
         final TypePageInfo typePageInfo = (TypePageInfo) pageInfo;
-        final DocumentedVirtualMembers virtualMembers = convertVirtualMembers(typeElement, typePageInfo);
-        final DocumentedStaticMembers staticMembers = convertStaticMembers(typeElement, typePageInfo);
+        final DocumentedVirtualMembers virtualMembers = convertVirtualMembers(knownElementList, typeElement, typePageInfo);
+        final DocumentedStaticMembers staticMembers = convertStaticMembers(knownElementList, typeElement, typePageInfo);
         final AbstractTypeInfo superType = convertSuperType(typeElement);
         final List<AbstractTypeInfo> implementations = convertImplementations(typeElement);
         final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(typeElement);
@@ -79,12 +80,12 @@ public class NamedTypeConverter extends DocumentConverter {
         return new TypePage(typePageInfo, virtualMembers, superType, implementations, staticMembers, genericParameters);
     }
     
-    private DocumentedVirtualMembers convertVirtualMembers(TypeElement typeElement, TypePageInfo typePageInfo) {
-        return namedTypeVirtualMemberConverter.convertFor(typeElement, typePageInfo);
+    private DocumentedVirtualMembers convertVirtualMembers(KnownElementList knownElements,TypeElement typeElement, TypePageInfo typePageInfo) {
+        return namedTypeVirtualMemberConverter.convertFor(knownElements,typeElement, typePageInfo);
     }
     
-    private DocumentedStaticMembers convertStaticMembers(TypeElement typeElement, TypePageInfo typePageInfo) {
-        return staticMemberConverter.convertFor(typeElement, typePageInfo);
+    private DocumentedStaticMembers convertStaticMembers(KnownElementList knownElements, TypeElement typeElement, TypePageInfo typePageInfo) {
+        return staticMemberConverter.convertFor(knownElements, typeElement, typePageInfo);
     }
     
     private AbstractTypeInfo convertSuperType(TypeElement typeElement) {
