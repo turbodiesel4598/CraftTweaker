@@ -10,6 +10,7 @@ import org.openzen.zencode.java.ZenCodeType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 
 public class NamedTypeVirtualFieldConverter extends AbstractEnclosedElementConverter<DocumentedTypeVirtualMembers> {
     
@@ -25,7 +26,7 @@ public class NamedTypeVirtualFieldConverter extends AbstractEnclosedElementConve
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
         final PropertyMember property = convertProperty(enclosedElement);
         result.addProperty(property);
     }

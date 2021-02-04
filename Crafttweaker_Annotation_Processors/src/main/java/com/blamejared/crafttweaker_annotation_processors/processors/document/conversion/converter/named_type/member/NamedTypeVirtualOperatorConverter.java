@@ -15,6 +15,7 @@ import org.openzen.zencode.java.ZenCodeType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
@@ -38,16 +39,16 @@ public class NamedTypeVirtualOperatorConverter extends AbstractEnclosedElementCo
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
         ExecutableElement method = (ExecutableElement) enclosedElement;
-        final OperatorMember operatorMember = convertOperator(method, pageInfo);
-        
+        final OperatorMember operatorMember = convertOperator(parentElement,method, pageInfo);
+    
         result.addOperator(operatorMember);
     }
     
-    private OperatorMember convertOperator(ExecutableElement method, DocumentationPageInfo pageInfo) {
-        final MemberHeader header = convertHeader(method);
-        final DocumentationComment comment = convertComment(method, pageInfo);
+    private OperatorMember convertOperator(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
+        final MemberHeader header = convertHeader(parentElement,method);
+        final DocumentationComment comment = convertComment(parentElement,method, pageInfo);
         final ZenCodeType.OperatorType type = convertType(method);
         final AbstractTypeInfo ownerType = convertOwnerType(pageInfo);
         
@@ -62,12 +63,12 @@ public class NamedTypeVirtualOperatorConverter extends AbstractEnclosedElementCo
         throw new IllegalArgumentException("Cannot get ownerType from " + pageInfo.getSimpleName());
     }
     
-    private MemberHeader convertHeader(ExecutableElement method) {
+    private MemberHeader convertHeader(TypeElement parentElement, ExecutableElement method) {
         final List<? extends VariableElement> parameters = convertParameters(method);
         final List<? extends TypeParameterElement> typeParameters = convertTypeParameters(method);
         final TypeMirror returnType = convertReturnType(method);
         
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> convertParameters(ExecutableElement method) {
@@ -82,8 +83,8 @@ public class NamedTypeVirtualOperatorConverter extends AbstractEnclosedElementCo
         return method.getReturnType();
     }
     
-    private DocumentationComment convertComment(ExecutableElement method, DocumentationPageInfo pageInfo) {
-        return commentConverter.convertForMethod(method, pageInfo);
+    private DocumentationComment convertComment(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
+        return commentConverter.convertForMethod(parentElement,method, pageInfo);
     }
     
     private ZenCodeType.OperatorType convertType(ExecutableElement method) {

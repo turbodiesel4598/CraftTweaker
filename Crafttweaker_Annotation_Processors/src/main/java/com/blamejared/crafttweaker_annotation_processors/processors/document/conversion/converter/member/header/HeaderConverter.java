@@ -30,10 +30,10 @@ public class HeaderConverter {
         this.typeUtils = typeUtils;
     }
     
-    public MemberHeader convertHeaderFor(List<? extends VariableElement> parameters, List<? extends TypeParameterElement> typeParameters, TypeMirror returnType) {
+    public MemberHeader convertHeaderFor(TypeElement parentElement, List<? extends VariableElement> parameters, List<? extends TypeParameterElement> typeParameters, TypeMirror returnType) {
         final AbstractTypeInfo returnTypeInfo = convertReturnType(returnType);
-        final List<DocumentedParameter> documentedParameters = convertParameters(parameters, typeParameters);
-        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(typeParameters);
+        final List<DocumentedParameter> documentedParameters = convertParameters(parentElement,parameters, typeParameters);
+        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(parentElement,typeParameters);
         
         return new MemberHeader(returnTypeInfo, documentedParameters, genericParameters);
     }
@@ -42,12 +42,12 @@ public class HeaderConverter {
         return typeConverter.convertType(returnType);
     }
     
-    private List<DocumentedParameter> convertParameters(List<? extends VariableElement> parameters, List<? extends TypeParameterElement> typeParameters) {
+    private List<DocumentedParameter> convertParameters(TypeElement parentElement, List<? extends VariableElement> parameters, List<? extends TypeParameterElement> typeParameters) {
         parameters = new ArrayList<>(parameters);
         removeClassParametersIfPresent(parameters, typeParameters.size());
         
         return parameters.stream()
-                .map(parameterConverter::convertParameter)
+                .map(variableElement -> parameterConverter.convertParameter(parentElement, variableElement))
                 .collect(Collectors.toList());
     }
     
@@ -71,9 +71,9 @@ public class HeaderConverter {
         return element.getQualifiedName().toString().equals(Class.class.getCanonicalName());
     }
     
-    private List<DocumentedGenericParameter> convertGenericParameters(List<? extends TypeParameterElement> typeParameters) {
+    private List<DocumentedGenericParameter> convertGenericParameters(TypeElement parentElement,  List<? extends TypeParameterElement> typeParameters) {
         return typeParameters.stream()
-                .map(genericParameterConverter::convertGenericParameter)
+                .map(typeParameterElement -> genericParameterConverter.convertGenericParameter(parentElement, typeParameterElement))
                 .collect(Collectors.toList());
     }
     

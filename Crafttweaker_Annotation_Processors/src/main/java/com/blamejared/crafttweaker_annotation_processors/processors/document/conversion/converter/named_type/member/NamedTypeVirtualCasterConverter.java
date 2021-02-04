@@ -12,6 +12,7 @@ import org.openzen.zencode.java.ZenCodeType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
@@ -33,26 +34,26 @@ public class NamedTypeVirtualCasterConverter extends AbstractEnclosedElementConv
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
         ExecutableElement method = (ExecutableElement) enclosedElement;
-        final CasterMember casterMember = convertCaster(method, pageInfo);
+        final CasterMember casterMember = convertCaster(parentElement,method, pageInfo);
         result.addCaster(casterMember);
     }
     
-    private CasterMember convertCaster(ExecutableElement method, DocumentationPageInfo pageInfo) {
-        final MemberHeader header = convertHeader(method);
-        final DocumentationComment comment = convertComment(method, pageInfo);
+    private CasterMember convertCaster(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
+        final MemberHeader header = convertHeader(parentElement,method);
+        final DocumentationComment comment = convertComment(parentElement,method, pageInfo);
         final boolean isImplicit = checkIfImplicit(method);
         
         return new CasterMember(header, comment, isImplicit);
     }
     
-    private MemberHeader convertHeader(ExecutableElement method) {
+    private MemberHeader convertHeader(TypeElement parentElement, ExecutableElement method) {
         final List<? extends VariableElement> parameters = convertParameters(method);
         final List<? extends TypeParameterElement> typeParameters = convertTypeParameters(method);
         final TypeMirror returnType = convertReturnType(method);
         
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> convertParameters(ExecutableElement method) {
@@ -67,8 +68,8 @@ public class NamedTypeVirtualCasterConverter extends AbstractEnclosedElementConv
         return method.getReturnType();
     }
     
-    private DocumentationComment convertComment(ExecutableElement method, DocumentationPageInfo pageInfo) {
-        return commentConverter.convertForMethod(method, pageInfo);
+    private DocumentationComment convertComment(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
+        return commentConverter.convertForMethod(parentElement,method, pageInfo);
     }
     
     private boolean checkIfImplicit(ExecutableElement method) {

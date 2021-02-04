@@ -20,11 +20,11 @@ public class ParameterConverter {
         this.optionalParameterConverter = optionalParameterConverter;
     }
     
-    public DocumentedParameter convertParameter(VariableElement variableElement) {
+    public DocumentedParameter convertParameter(TypeElement parentElement, VariableElement variableElement) {
         if(isOptional(variableElement)) {
-            return convertOptionalParameter(variableElement);
+            return convertOptionalParameter(parentElement,variableElement);
         } else {
-            return convertNonOptionalParameter(variableElement);
+            return convertNonOptionalParameter(parentElement,variableElement);
         }
     }
     
@@ -36,19 +36,19 @@ public class ParameterConverter {
         return optionalParameterConverter.convertDefaultValue(variableElement);
     }
     
-    private DocumentedParameter convertOptionalParameter(VariableElement variableElement) {
+    private DocumentedParameter convertOptionalParameter(TypeElement parentElement, VariableElement variableElement) {
         final String name = convertName(variableElement);
         final AbstractTypeInfo type = convertType(variableElement);
-        final DocumentationComment comment = convertComment(variableElement);
+        final DocumentationComment comment = convertComment(parentElement,variableElement);
         final String defaultValue = convertDefaultValue(variableElement);
         
         return new DocumentedOptionalParameter(name, type, comment, defaultValue);
     }
     
-    private DocumentedParameter convertNonOptionalParameter(VariableElement variableElement) {
+    private DocumentedParameter convertNonOptionalParameter(TypeElement parentElement, VariableElement variableElement) {
         final String name = convertName(variableElement);
         final AbstractTypeInfo type = convertType(variableElement);
-        final DocumentationComment comment = convertComment(variableElement);
+        final DocumentationComment comment = convertComment(parentElement,variableElement);
         return new DocumentedParameter(name, type, comment);
     }
     
@@ -60,7 +60,7 @@ public class ParameterConverter {
         return typeConverter.convertType(variableElement.asType());
     }
     
-    private DocumentationComment convertComment(VariableElement variableElement) {
-        return commentConverter.convertForParameter(variableElement);
+    private DocumentationComment convertComment(TypeElement parentElement, VariableElement variableElement) {
+        return commentConverter.convertForParameter(parentElement, variableElement);
     }
 }

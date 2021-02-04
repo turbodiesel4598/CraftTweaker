@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class MemberConverter<T> {
     
@@ -26,14 +25,14 @@ public abstract class MemberConverter<T> {
         
         final T result = createResultObject(pageInfo);
         for(Element enclosedElement : typeElement.getEnclosedElements()) {
-            convertMemberFor(enclosedElement, result, pageInfo);
+            convertMemberFor(null,enclosedElement, result, pageInfo);
         }
         ArrayList<TypeElement> interfaces = new ArrayList<>();
         traverseInterfaces(knownElements, typeElement, interfaces);
         for(TypeElement element : interfaces) {
             for(Element enclosedElement : element.getEnclosedElements()) {
     
-                convertMemberFor(enclosedElement, result, pageInfo);
+                convertMemberFor(typeElement, enclosedElement, result, pageInfo);
             }
         }
         
@@ -53,7 +52,7 @@ public abstract class MemberConverter<T> {
         }
     }
     
-    private void convertMemberFor(Element enclosedElement, T result, DocumentationPageInfo pageInfo) {
+    private void convertMemberFor(TypeElement parentElement, Element enclosedElement, T result, DocumentationPageInfo pageInfo) {
         
         if(!isCandidate(enclosedElement)) {
             return;
@@ -63,10 +62,11 @@ public abstract class MemberConverter<T> {
         final List<AbstractEnclosedElementConverter<T>> converters = getConvertersFor(kind);
         for(AbstractEnclosedElementConverter<T> converter : converters) {
             if(converter.canConvert(enclosedElement)) {
-                converter.convertAndAddTo(enclosedElement, result, pageInfo);
+                converter.convertAndAddTo(parentElement, enclosedElement, result, pageInfo);
             }
         }
     }
+    
     
     private List<AbstractEnclosedElementConverter<T>> getConvertersFor(ElementKind kind) {
         

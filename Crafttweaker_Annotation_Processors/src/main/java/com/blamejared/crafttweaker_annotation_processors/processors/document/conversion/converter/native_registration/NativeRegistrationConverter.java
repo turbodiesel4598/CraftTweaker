@@ -115,12 +115,12 @@ public class NativeRegistrationConverter extends DocumentConverter {
     }
     
     @Override
-    public DocumentationPage convert(TypeElement typeElement, DocumentationPageInfo pageInfo) {
+    public DocumentationPage convert(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo) {
         final DocumentedVirtualMembers virtualMembers = convertVirtualMembers(typeElement, pageInfo);
         final AbstractTypeInfo superType = convertSuperType(typeElement);
         final List<AbstractTypeInfo> implementedInterfaces = convertImplementedInterfaces(typeElement);
         final DocumentedStaticMembers staticMembers = convertStaticMembers(typeElement, pageInfo);
-        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(typeElement);
+        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(parentElement, typeElement);
         
         return new TypePage((TypePageInfo) pageInfo, virtualMembers, superType, implementedInterfaces, staticMembers, genericParameters);
     }
@@ -143,10 +143,10 @@ public class NativeRegistrationConverter extends DocumentConverter {
         return staticMemberConverter.convertFor(knownElementList,typeElement, pageInfo);
     }
     
-    private List<DocumentedGenericParameter> convertGenericParameters(TypeElement typeElement) {
+    private List<DocumentedGenericParameter> convertGenericParameters(TypeElement parentElement, TypeElement typeElement) {
         return typeElement.getTypeParameters()
                 .stream()
-                .map(genericParameterConverter::convertGenericParameter)
+                .map(typeParameterElement -> genericParameterConverter.convertGenericParameter(parentElement, typeParameterElement))
                 .collect(Collectors.toList());
     }
 }

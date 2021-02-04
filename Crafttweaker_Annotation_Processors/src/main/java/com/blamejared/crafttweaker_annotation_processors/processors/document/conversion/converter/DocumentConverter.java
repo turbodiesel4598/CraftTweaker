@@ -26,7 +26,7 @@ public abstract class DocumentConverter {
     
     public abstract boolean canConvert(TypeElement typeElement);
     
-    public abstract DocumentationPage convert(TypeElement typeElement, DocumentationPageInfo pageInfo);
+    public abstract DocumentationPage convert(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo);
     
     protected DocumentationPageInfo prepareConversion(TypeElement element) {
         final Document annotation = element.getAnnotation(Document.class);
@@ -40,8 +40,8 @@ public abstract class DocumentConverter {
     }
     
     
-    public void setDocumentationCommentTo(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        final DocumentationComment typeComment = commentConverter.convertForType(typeElement);
+    public void setDocumentationCommentTo(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo) {
+        final DocumentationComment typeComment = commentConverter.convertForType(parentElement, typeElement);
         addThisInformationIfNotPresent(typeComment, typeElement);
         pageInfo.setTypeComment(typeComment);
     }

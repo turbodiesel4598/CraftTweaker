@@ -39,4 +39,15 @@ public class DocumentationComment {
         final Optional<Example> example = exampleData.tryGetExampleFor(name);
         return example.map(Example::numberOfExamples).orElse(0);
     }
+    
+    @Override
+    public String toString() {
+        
+        final StringBuilder sb = new StringBuilder("DocumentationComment{");
+        sb.append("description='").append(description).append('\'');
+        sb.append(", exampleData=").append(exampleData);
+        sb.append('}');
+        return sb.toString();
+    }
+    
 }

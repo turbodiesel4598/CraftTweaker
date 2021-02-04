@@ -15,6 +15,7 @@ import org.openzen.zencode.java.ZenCodeType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
@@ -41,31 +42,32 @@ public class NamedTypeVirtualMethodConverter extends AbstractEnclosedElementConv
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
         ExecutableElement methodElement = (ExecutableElement) enclosedElement;
         final AbstractTypeInfo ownerType = getOwnerType(pageInfo);
-        final VirtualMethodMember methodMember = convertMethod(methodElement, pageInfo);
+        final VirtualMethodMember methodMember = convertMethod(parentElement, methodElement, pageInfo);
         result.addMethod(methodMember, ownerType);
     }
     
-    private VirtualMethodMember convertMethod(ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
+    
+    private VirtualMethodMember convertMethod(TypeElement parentElement, ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
         final String name = convertName(enclosedElement);
-        final MemberHeader header = convertHeader(enclosedElement);
-        final DocumentationComment comment = convertComment(enclosedElement, pageInfo);
+        final MemberHeader header = convertHeader(parentElement,enclosedElement);
+        final DocumentationComment comment = convertComment(parentElement, enclosedElement, pageInfo);
         
         return new VirtualMethodMember(header, comment, name);
     }
     
-    private DocumentationComment convertComment(ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
-        return commentConverter.convertForMethod(enclosedElement, pageInfo);
+    private DocumentationComment convertComment(TypeElement parentElement, ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
+        return commentConverter.convertForMethod(parentElement, enclosedElement, pageInfo);
     }
     
-    private MemberHeader convertHeader(ExecutableElement enclosedElement) {
+    private MemberHeader convertHeader(TypeElement parentElement, ExecutableElement enclosedElement) {
         final List<? extends VariableElement> parameters = getParameters(enclosedElement);
         final List<? extends TypeParameterElement> typeParameters = enclosedElement.getTypeParameters();
         final TypeMirror returnType = enclosedElement.getReturnType();
         
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> getParameters(ExecutableElement enclosedElement) {

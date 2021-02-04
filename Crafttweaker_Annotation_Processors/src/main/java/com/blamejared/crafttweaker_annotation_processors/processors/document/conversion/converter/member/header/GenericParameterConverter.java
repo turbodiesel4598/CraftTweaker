@@ -6,6 +6,7 @@ import com.blamejared.crafttweaker_annotation_processors.processors.document.pag
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.member.header.DocumentedGenericParameter;
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.type.AbstractTypeInfo;
 
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +21,10 @@ public class GenericParameterConverter {
         this.commentConverter = commentConverter;
     }
     
-    public DocumentedGenericParameter convertGenericParameter(TypeParameterElement typeParameterElement) {
+    public DocumentedGenericParameter convertGenericParameter(TypeElement parentElement, TypeParameterElement typeParameterElement) {
         final String name = convertName(typeParameterElement);
         final List<AbstractTypeInfo> bounds = convertBounds(typeParameterElement);
-        final DocumentationComment comment = convertComment(typeParameterElement);
+        final DocumentationComment comment = convertComment(parentElement,typeParameterElement);
     
         return new DocumentedGenericParameter(bounds, name, comment);
     }
@@ -32,8 +33,8 @@ public class GenericParameterConverter {
         return typeParameterElement.getSimpleName().toString();
     }
     
-    private DocumentationComment convertComment(TypeParameterElement typeParameterElement) {
-        return commentConverter.convertForTypeParameter(typeParameterElement);
+    private DocumentationComment convertComment(TypeElement parentElement, TypeParameterElement typeParameterElement) {
+        return commentConverter.convertForTypeParameter(parentElement,typeParameterElement);
     }
     
     private List<AbstractTypeInfo> convertBounds(TypeParameterElement typeParameterElement) {

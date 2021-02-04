@@ -2,8 +2,6 @@ package com.blamejared.crafttweaker_annotation_processors.processors.document.pa
 
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.comment.DocumentationComment;
 
-import java.io.File;
-
 public class DocumentationPageInfo {
     
     public final String declaringModId;
@@ -42,4 +40,16 @@ public class DocumentationPageInfo {
     public void setTypeComment(DocumentationComment typeComment) {
         this.classComment = typeComment;
     }
+    
+    @Override
+    public String toString() {
+        
+        final StringBuilder sb = new StringBuilder("DocumentationPageInfo{");
+        sb.append("declaringModId='").append(declaringModId).append('\'');
+        sb.append(", outputPath='").append(outputPath).append('\'');
+        sb.append(", classComment=").append(classComment);
+        sb.append('}');
+        return sb.toString();
+    }
+    
 }

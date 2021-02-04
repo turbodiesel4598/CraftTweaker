@@ -14,39 +14,39 @@ public class ElementConverter {
         this.conversionRegistry = conversionRegistry;
     }
     
-    public void handleElements(KnownElementList knownElementList) {
-        prepareElements(knownElementList);
-        convertElements(knownElementList);
+    public void handleElements(TypeElement parentElement, KnownElementList knownElementList) {
+        prepareElements(parentElement,knownElementList);
+        convertElements(parentElement,knownElementList);
     }
     
-    private void prepareElements(KnownElementList knownElementList) {
+    private void prepareElements(TypeElement parentElement, KnownElementList knownElementList) {
         final Collection<TypeElement> elementsForTypeDocumentation = knownElementList.getElementsForTypeDocumentation();
         final Collection<TypeElement> elementsForExpansionDocumentation = knownElementList.getElementsForExpansionDocumentation();
         
-        prepareDocumentation(elementsForTypeDocumentation);
-        prepareDocumentation(elementsForExpansionDocumentation);
+        prepareDocumentation(parentElement, elementsForTypeDocumentation);
+        prepareDocumentation(parentElement, elementsForExpansionDocumentation);
     }
     
-    private void convertElements(KnownElementList knownElementList) {
+    private void convertElements(TypeElement parentElement, KnownElementList knownElementList) {
         final Collection<TypeElement> elementsForTypeDocumentation = knownElementList.getElementsForTypeDocumentation();
         final Collection<TypeElement> elementsForExpansionDocumentation = knownElementList.getElementsForExpansionDocumentation();
         
-        handleDocumentation(elementsForTypeDocumentation);
-        handleDocumentation(elementsForExpansionDocumentation);
+        handleDocumentation(parentElement,elementsForTypeDocumentation);
+        handleDocumentation(parentElement,elementsForExpansionDocumentation);
     }
     
-    private void prepareDocumentation(Collection<TypeElement> elementsToPrepare) {
+    private void prepareDocumentation(TypeElement parentElement, Collection<TypeElement> elementsToPrepare) {
         for(TypeElement typeElement : elementsToPrepare) {
             conversionRegistry.prepareTypePageFor(typeElement);
         }
         for(TypeElement typeElement : elementsToPrepare) {
-            conversionRegistry.setCommentInfoFor(typeElement);
+            conversionRegistry.setCommentInfoFor(parentElement, typeElement);
         }
     }
     
-    private void handleDocumentation(Collection<TypeElement> elementsForExpansionDocumentation) {
+    private void handleDocumentation(TypeElement parentElement, Collection<TypeElement> elementsForExpansionDocumentation) {
         for(TypeElement typeElement : elementsForExpansionDocumentation) {
-            conversionRegistry.convert(typeElement);
+            conversionRegistry.convert(parentElement,typeElement);
         }
     }
     

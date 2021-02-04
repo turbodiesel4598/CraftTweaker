@@ -31,35 +31,35 @@ public class DocumentConversionRegistry {
         setPageInfo(typeElement);
     }
     
-    public void setCommentInfoFor(TypeElement typeElement) {
-        setCommentData(typeElement);
+    public void setCommentInfoFor(TypeElement parentElement, TypeElement typeElement) {
+        setCommentData(parentElement, typeElement);
     }
     
-    public void convert(TypeElement typeElement) {
-        convertAndAddToRegistry(typeElement);
+    public void convert(TypeElement parentElement, TypeElement typeElement) {
+        convertAndAddToRegistry(parentElement,typeElement);
     }
     
-    private void convertAndAddToRegistry(TypeElement typeElement) {
+    private void convertAndAddToRegistry(TypeElement parentElement, TypeElement typeElement) {
         converters.stream()
                 .filter(converter -> documentRegistry.hasPageInfoFor(typeElement))
                 .filter(converter -> converter.canConvert(typeElement))
-                .map(converter -> converter.convert(typeElement, documentRegistry.getPageInfoFor(typeElement)))
+                .map(converter -> converter.convert(parentElement,typeElement, documentRegistry.getPageInfoFor(typeElement)))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .ifPresent(documentRegistry::addDocumentationPage);
     }
     
-    private void setCommentData(TypeElement typeElement) {
+    private void setCommentData(TypeElement parentElement, TypeElement typeElement) {
         converters.stream()
                 .filter(converter -> documentRegistry.hasPageInfoFor(typeElement))
                 .filter(converter -> converter.canConvert(typeElement))
-                .forEach(setCommentInfo(typeElement));
+                .forEach(setCommentInfo(parentElement, typeElement));
         
     }
     
     @Nonnull
-    private Consumer<DocumentConverter> setCommentInfo(TypeElement typeElement) {
-        return converter -> converter.setDocumentationCommentTo(typeElement, documentRegistry.getPageInfoFor(typeElement));
+    private Consumer<DocumentConverter> setCommentInfo(TypeElement parentElement, TypeElement typeElement) {
+        return converter -> converter.setDocumentationCommentTo(parentElement, typeElement, documentRegistry.getPageInfoFor(typeElement));
     }
     
     private void setPageInfo(TypeElement typeElement) {

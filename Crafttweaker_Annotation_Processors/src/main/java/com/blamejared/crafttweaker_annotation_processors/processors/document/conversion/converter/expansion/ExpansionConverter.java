@@ -46,7 +46,7 @@ public class ExpansionConverter extends DocumentConverter {
     }
     
     @Override
-    public DocumentationPage convert(TypeElement typeElement, DocumentationPageInfo pageInfo) {
+    public DocumentationPage convert(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo) {
         final AbstractTypeInfo expandedType = getExpandedType(typeElement);
         
         final DocumentedVirtualMembers virtualMembers = getVirtualMembers(typeElement, expandedType);
@@ -88,8 +88,8 @@ public class ExpansionConverter extends DocumentConverter {
     }
     
     @Override
-    public void setDocumentationCommentTo(TypeElement typeElement, DocumentationPageInfo pageInfo) {
-        super.setDocumentationCommentTo(typeElement, pageInfo);
+    public void setDocumentationCommentTo(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo) {
+        super.setDocumentationCommentTo(parentElement,typeElement, pageInfo);
     }
     
     @Override

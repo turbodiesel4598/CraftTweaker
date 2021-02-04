@@ -113,7 +113,7 @@ public class DocumentProcessor extends AbstractCraftTweakerProcessor {
     
     private void convertPages() {
         final ElementConverter elementConverter = dependencyContainer.getInstanceOfClass(ElementConverter.class);
-        elementConverter.handleElements(knownElementList);
+        elementConverter.handleElements(null,knownElementList);
     }
     
     private void writePages() {

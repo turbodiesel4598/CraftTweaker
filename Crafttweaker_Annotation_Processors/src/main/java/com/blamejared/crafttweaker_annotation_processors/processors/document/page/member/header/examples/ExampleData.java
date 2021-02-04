@@ -51,4 +51,14 @@ public class ExampleData {
     public Map<String, Example> getExampleMap() {
         return examples;
     }
+    
+    @Override
+    public String toString() {
+        
+        final StringBuilder sb = new StringBuilder("ExampleData{");
+        sb.append("examples=").append(examples);
+        sb.append('}');
+        return sb.toString();
+    }
+    
 }

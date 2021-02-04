@@ -36,11 +36,11 @@ public class ExpansionMethodConverter extends AbstractEnclosedElementConverter<D
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedVirtualMembers result, DocumentationPageInfo pageInfo) {
         final ExecutableElement method = (ExecutableElement) enclosedElement;
-        final VirtualMethodMember convertedMethod = convert(method, pageInfo);
+        final VirtualMethodMember convertedMethod = convert(parentElement,method, pageInfo);
         final AbstractTypeInfo ownerTypeInfo = getOwnerTypeInfo(pageInfo);
-        
+    
         result.addMethod(convertedMethod, ownerTypeInfo);
     }
     
@@ -48,19 +48,19 @@ public class ExpansionMethodConverter extends AbstractEnclosedElementConverter<D
         return typeConverter.convertByName(((TypePageInfo) pageInfo).zenCodeName);
     }
     
-    private VirtualMethodMember convert(ExecutableElement method, DocumentationPageInfo pageInfo) {
+    private VirtualMethodMember convert(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
         final String name = method.getSimpleName().toString();
-        final DocumentationComment description = commentConverter.convertForMethod(method, pageInfo);
-        final MemberHeader header = convertHeader(method);
+        final DocumentationComment description = commentConverter.convertForMethod(parentElement,method, pageInfo);
+        final MemberHeader header = convertHeader(parentElement,method);
         
         return new VirtualMethodMember(header, description, name);
     }
     
-    private MemberHeader convertHeader(ExecutableElement method) {
+    private MemberHeader convertHeader(TypeElement parentElement, ExecutableElement method) {
         final List<? extends VariableElement> parameters = getParametersFor(method);
         final List<? extends TypeParameterElement> typeParameters = getTypeParametersFor(method);
         final TypeMirror returnType = method.getReturnType();
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> getParametersFor(ExecutableElement method) {

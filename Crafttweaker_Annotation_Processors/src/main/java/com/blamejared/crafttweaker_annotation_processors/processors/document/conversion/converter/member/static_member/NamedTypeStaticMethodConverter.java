@@ -58,20 +58,21 @@ public class NamedTypeStaticMethodConverter extends AbstractEnclosedElementConve
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedStaticMembers result, DocumentationPageInfo pageInfo) {
-        final StaticMethodMember staticMethodMember = convertStaticMethodMember(enclosedElement, pageInfo);
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedStaticMembers result, DocumentationPageInfo pageInfo) {
+        final StaticMethodMember staticMethodMember = convertStaticMethodMember(parentElement,enclosedElement, pageInfo);
         final AbstractTypeInfo ownerType = getOwnerType(pageInfo);
         
         result.addMethod(staticMethodMember, ownerType);
     }
     
-    private StaticMethodMember convertStaticMethodMember(Element enclosedElement, DocumentationPageInfo pageInfo) {
+    
+    private StaticMethodMember convertStaticMethodMember(TypeElement parentElement, Element enclosedElement, DocumentationPageInfo pageInfo) {
         ExecutableElement method = (ExecutableElement) enclosedElement;
         
         if(isBEPMethod(method)) {
-            return convertBEPMethodMember(method, pageInfo);
+            return convertBEPMethodMember(parentElement,method, pageInfo);
         } else {
-            return convertMethodMember(method, pageInfo);
+            return convertMethodMember(parentElement,method, pageInfo);
         }
     }
     
@@ -79,10 +80,10 @@ public class NamedTypeStaticMethodConverter extends AbstractEnclosedElementConve
         return annotationMirrorUtil.isAnnotationPresentOn(method, BEPAnnotationClass);
     }
     
-    private StaticMethodMember convertBEPMethodMember(ExecutableElement method, DocumentationPageInfo pageInfo) {
+    private StaticMethodMember convertBEPMethodMember(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
         final String name = getName(method);
-        final MemberHeader header = getHeader(method);
-        final DocumentationComment comment = getComment(method, pageInfo);
+        final MemberHeader header = getHeader(parentElement,method);
+        final DocumentationComment comment = getComment(parentElement,method, pageInfo);
         final String bepName = getBepName(method);
         final String returnTypeInfo = getReturnTypeInfo(method);
         
@@ -94,10 +95,10 @@ public class NamedTypeStaticMethodConverter extends AbstractEnclosedElementConve
         return annotationMirrorUtil.getAnnotationValue(mirror, "value");
     }
     
-    private StaticMethodMember convertMethodMember(ExecutableElement method, DocumentationPageInfo pageInfo) {
+    private StaticMethodMember convertMethodMember(TypeElement parentElement, ExecutableElement method, DocumentationPageInfo pageInfo) {
         final String name = getName(method);
-        final MemberHeader header = getHeader(method);
-        final DocumentationComment comment = getComment(method, pageInfo);
+        final MemberHeader header = getHeader(parentElement,method);
+        final DocumentationComment comment = getComment(parentElement,method, pageInfo);
         final String returnTypeInfo = getReturnTypeInfo(method);
         
         return new StaticMethodMember(name, header, comment, returnTypeInfo);
@@ -127,11 +128,11 @@ public class NamedTypeStaticMethodConverter extends AbstractEnclosedElementConve
         return method.getAnnotation(ZenCodeType.Method.class);
     }
     
-    private MemberHeader getHeader(ExecutableElement enclosedElement) {
+    private MemberHeader getHeader(TypeElement parentElement, ExecutableElement enclosedElement) {
         final List<? extends VariableElement> parameters = getParameters(enclosedElement);
         final List<? extends TypeParameterElement> typeParameters = getTypeParameters(enclosedElement);
         final TypeMirror returnType = getReturnType(enclosedElement);
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> getParameters(ExecutableElement enclosedElement) {
@@ -146,8 +147,8 @@ public class NamedTypeStaticMethodConverter extends AbstractEnclosedElementConve
         return enclosedElement.getReturnType();
     }
     
-    private DocumentationComment getComment(ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
-        return commentConverter.convertForMethod(enclosedElement, pageInfo);
+    private DocumentationComment getComment(TypeElement parentElement, ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
+        return commentConverter.convertForMethod(parentElement,enclosedElement, pageInfo);
     }
     
     private AbstractTypeInfo getOwnerType(DocumentationPageInfo pageInfo) {

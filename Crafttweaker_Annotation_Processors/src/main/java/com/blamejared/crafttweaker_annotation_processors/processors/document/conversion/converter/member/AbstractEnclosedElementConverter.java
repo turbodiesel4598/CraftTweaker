@@ -3,6 +3,7 @@ package com.blamejared.crafttweaker_annotation_processors.processors.document.co
 import com.blamejared.crafttweaker_annotation_processors.processors.document.page.info.DocumentationPageInfo;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 
 public abstract class AbstractEnclosedElementConverter<T> {
@@ -17,5 +18,5 @@ public abstract class AbstractEnclosedElementConverter<T> {
     
     public abstract boolean canConvert(Element enclosedElement);
     
-    public abstract void convertAndAddTo(Element enclosedElement, T result, DocumentationPageInfo pageInfo);
+    public abstract void convertAndAddTo(TypeElement parentElement, Element enclosedElement, T result, DocumentationPageInfo pageInfo);
 }

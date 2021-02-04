@@ -10,6 +10,7 @@ import org.openzen.zencode.java.ZenCodeType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
 public class NamedTypeVirtualGetterSetterConverter extends AbstractEnclosedElementConverter<DocumentedTypeVirtualMembers> {
@@ -26,10 +27,10 @@ public class NamedTypeVirtualGetterSetterConverter extends AbstractEnclosedEleme
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
         final ExecutableElement method = (ExecutableElement) enclosedElement;
         final PropertyMember propertyMember = convertMember(method);
-        
+    
         result.addProperty(propertyMember);
     }
     

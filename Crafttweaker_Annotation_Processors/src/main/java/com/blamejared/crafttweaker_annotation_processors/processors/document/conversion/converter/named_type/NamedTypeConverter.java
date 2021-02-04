@@ -69,13 +69,13 @@ public class NamedTypeConverter extends DocumentConverter {
     }
     
     @Override
-    public DocumentationPage convert(TypeElement typeElement, DocumentationPageInfo pageInfo) {
+    public DocumentationPage convert(TypeElement parentElement, TypeElement typeElement, DocumentationPageInfo pageInfo) {
         final TypePageInfo typePageInfo = (TypePageInfo) pageInfo;
         final DocumentedVirtualMembers virtualMembers = convertVirtualMembers(knownElementList, typeElement, typePageInfo);
         final DocumentedStaticMembers staticMembers = convertStaticMembers(knownElementList, typeElement, typePageInfo);
         final AbstractTypeInfo superType = convertSuperType(typeElement);
         final List<AbstractTypeInfo> implementations = convertImplementations(typeElement);
-        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(typeElement);
+        final List<DocumentedGenericParameter> genericParameters = convertGenericParameters(parentElement,typeElement);
         
         return new TypePage(typePageInfo, virtualMembers, superType, implementations, staticMembers, genericParameters);
     }
@@ -96,10 +96,10 @@ public class NamedTypeConverter extends DocumentConverter {
         return implementationConverter.convertInterfacesFor(typeElement);
     }
     
-    private List<DocumentedGenericParameter> convertGenericParameters(TypeElement typeElement) {
+    private List<DocumentedGenericParameter> convertGenericParameters(TypeElement parentElement, TypeElement typeElement) {
         return typeElement.getTypeParameters()
                 .stream()
-                .map(genericParameterConverter::convertGenericParameter)
+                .map(typeParameterElement -> genericParameterConverter.convertGenericParameter(parentElement, typeParameterElement))
                 .collect(Collectors.toList());
     }
 }

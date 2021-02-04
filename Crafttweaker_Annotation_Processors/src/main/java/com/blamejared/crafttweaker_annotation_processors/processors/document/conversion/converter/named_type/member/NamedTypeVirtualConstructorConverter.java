@@ -29,25 +29,26 @@ public class NamedTypeVirtualConstructorConverter extends AbstractEnclosedElemen
     }
     
     @Override
-    public void convertAndAddTo(Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
-        final ConstructorMember constructorMember = convertConstructor(enclosedElement, pageInfo);
+    public void convertAndAddTo(TypeElement parentElement, Element enclosedElement, DocumentedTypeVirtualMembers result, DocumentationPageInfo pageInfo) {
+        final ConstructorMember constructorMember = convertConstructor(parentElement,enclosedElement, pageInfo);
         result.addConstructor(constructorMember);
     }
     
-    private ConstructorMember convertConstructor(Element enclosedElement, DocumentationPageInfo pageInfo) {
+    
+    private ConstructorMember convertConstructor(TypeElement parentElement, Element enclosedElement, DocumentationPageInfo pageInfo) {
         ExecutableElement constructor = (ExecutableElement) enclosedElement;
-        final MemberHeader header = convertHeader(constructor);
-        final DocumentationComment comment = convertComment(constructor, pageInfo);
+        final MemberHeader header = convertHeader(parentElement,constructor);
+        final DocumentationComment comment = convertComment(parentElement,constructor, pageInfo);
         
         return new ConstructorMember(header, comment);
     }
     
-    private MemberHeader convertHeader(ExecutableElement constructor) {
+    private MemberHeader convertHeader(TypeElement parentElement, ExecutableElement constructor) {
         final List<? extends VariableElement> parameters = convertParameters(constructor);
         final List<? extends TypeParameterElement> typeParameters = convertTypeParameters(constructor);
         final TypeMirror returnType = convertReturnType(constructor);
         
-        return headerConverter.convertHeaderFor(parameters, typeParameters, returnType);
+        return headerConverter.convertHeaderFor(parentElement,parameters, typeParameters, returnType);
     }
     
     private List<? extends VariableElement> convertParameters(ExecutableElement constructor) {
@@ -62,7 +63,7 @@ public class NamedTypeVirtualConstructorConverter extends AbstractEnclosedElemen
         return element.getEnclosingElement().asType();
     }
     
-    private DocumentationComment convertComment(ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
-        return commentConverter.convertForConstructor(enclosedElement, pageInfo);
+    private DocumentationComment convertComment(TypeElement parentElement, ExecutableElement enclosedElement, DocumentationPageInfo pageInfo) {
+        return commentConverter.convertForConstructor(parentElement, enclosedElement, pageInfo);
     }
 }
